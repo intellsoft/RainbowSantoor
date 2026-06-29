@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🎵 سنتور رنگین‌کمان | مینی‌اپ بله</title>
+    <title>🎵 سنتور رنگین‌کمان | ملودی‌های کودکانه</title>
+    
+    <!-- جلوگیری از کش -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- SDK مینی‌اپ بله -->
     <script src="https://tapi.bale.ai/miniapp.js?3"></script>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+    
     <style>
         :root {
             --bg: #f5e6ff;
@@ -19,6 +22,7 @@
             --accent: #ff6b6b;
             --accent-play: #4ecdc4;
             --accent-stop: #ffd166;
+            --melody-bg: #ffeaa7;
             --border: rgba(255, 255, 255, 0.6);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             --radius: 24px;
@@ -29,6 +33,7 @@
             --surface: #2d2d44cc;
             --text: #e0d5f5;
             --text-secondary: #b8a9cc;
+            --melody-bg: #5c4b3c;
             --border: rgba(255, 255, 255, 0.15);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
@@ -64,8 +69,8 @@
             height: 100dvh;
             display: flex;
             flex-direction: column;
-            padding: 12px;
-            gap: 10px;
+            padding: 8px 12px;
+            gap: 8px;
             max-width: 700px;
             margin: 0 auto;
         }
@@ -75,9 +80,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
+            gap: 12px;
             flex-shrink: 0;
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: var(--surface);
             backdrop-filter: blur(15px);
             border-radius: var(--radius);
@@ -87,12 +92,12 @@
         }
 
         .btn-circle {
-            width: 58px;
-            height: 58px;
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -131,15 +136,55 @@
 
         .btn-label {
             position: absolute;
-            bottom: -26px;
-            font-size: 0.65rem;
+            bottom: -24px;
+            font-size: 0.6rem;
             background: rgba(0, 0, 0, 0.5);
             color: white;
-            padding: 2px 9px;
+            padding: 1px 8px;
             border-radius: 10px;
             white-space: nowrap;
             pointer-events: none;
             font-weight: bold;
+        }
+
+        /* بخش ملودی‌های آماده */
+        .melody-bar {
+            flex-shrink: 0;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 6px 8px;
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            align-items: center;
+            scrollbar-width: thin;
+            scrollbar-color: #ff9f43 transparent;
+        }
+        .melody-bar::-webkit-scrollbar { height: 3px; }
+        .melody-bar::-webkit-scrollbar-track { background: transparent; }
+        .melody-bar::-webkit-scrollbar-thumb { background: #ff9f43; border-radius: 10px; }
+
+        .melody-btn {
+            flex-shrink: 0;
+            background: var(--melody-bg);
+            border: 2px solid #ff9f43;
+            border-radius: 25px;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #4a2c5e;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            touch-action: manipulation;
+        }
+        .melody-btn:active {
+            background: #ff9f43;
+            color: white;
+            transform: scale(0.94);
         }
 
         /* ناحیه سنتور */
@@ -156,7 +201,7 @@
             box-shadow: var(--shadow), inset 0 2px 20px rgba(255, 255, 255, 0.3);
             padding: 16px 8px;
             overflow: visible;
-            min-height: 220px;
+            min-height: 180px;
             transition: all 0.3s;
         }
 
@@ -168,11 +213,8 @@
             z-index: 3;
         }
 
-        /* حالت افقی (پیش‌فرض) – ردیف‌های افقی */
         @media (orientation: landscape) {
-            .strings-container {
-                flex-direction: column;
-            }
+            .strings-container { flex-direction: column; }
             .strings-row {
                 display: flex;
                 flex-direction: row;
@@ -190,12 +232,8 @@
             }
         }
 
-        /* حالت عمودی – ستون‌های عمودی */
         @media (orientation: portrait) {
-            .strings-container {
-                flex-direction: row;
-                gap: 4px;
-            }
+            .strings-container { flex-direction: row; gap: 4px; }
             .strings-row {
                 display: flex;
                 flex-direction: column;
@@ -209,10 +247,6 @@
                 max-height: 48px;
                 min-height: 24px;
                 border-radius: 6px 14px 14px 6px;
-            }
-            .string .note-emoji {
-                position: static;
-                margin-left: 2px;
             }
         }
 
@@ -253,7 +287,6 @@
             box-shadow: none;
         }
 
-        /* نت شناور */
         .floating-note {
             position: absolute;
             pointer-events: none;
@@ -268,7 +301,6 @@
             100% { opacity: 0; transform: translateY(-45px) scale(1.3); }
         }
 
-        /* لیست ملودی‌ها */
         .saved-list {
             flex-shrink: 0;
             display: flex;
@@ -305,10 +337,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             white-space: nowrap;
         }
-        .saved-item:active {
-            background: #ffd166;
-            transform: scale(0.93);
-        }
+        .saved-item:active { background: #ffd166; transform: scale(0.93); }
         .saved-item .delete-btn {
             background: none;
             border: none;
@@ -326,7 +355,6 @@
             color: var(--text-secondary);
         }
 
-        /* فوتر */
         .footer {
             flex-shrink: 0;
             text-align: center;
@@ -355,7 +383,6 @@
             font-weight: bold;
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             top: 16px;
@@ -383,6 +410,7 @@
     <div class="toast" id="toast"></div>
 
     <div class="main-container" id="mainContainer">
+        <!-- نوار ابزار -->
         <div class="toolbar">
             <button class="btn-circle btn-record" id="btnRecord" onclick="toggleRecord()" title="ضبط">
                 🎙️
@@ -398,6 +426,16 @@
             </button>
         </div>
 
+        <!-- ملودی‌های آماده -->
+        <div class="melody-bar" id="melodyBar">
+            <button class="melody-btn" onclick="playPresetMelody('happyBirthday')">🎂 تولدت مبارک</button>
+            <button class="melody-btn" onclick="playPresetMelody('cheshmCheshm')">👶 چشم چشم دو ابرو</button>
+            <button class="melody-btn" onclick="playPresetMelody('aroosak')">🎎 عروسک قشنگم</button>
+            <button class="melody-btn" onclick="playPresetMelody('davidam')">🏃 دویدم و دویدم</button>
+            <button class="melody-btn" onclick="playPresetMelody('baroon')">🌧️ بارون بارونه</button>
+        </div>
+
+        <!-- سنتور -->
         <div class="santoor-area" id="santoorArea">
             <div class="strings-container" id="stringsContainer">
                 <div class="strings-row white-strings" id="whiteStrings"></div>
@@ -405,10 +443,12 @@
             </div>
         </div>
 
+        <!-- لیست ملودی‌های ضبط شده -->
         <div class="saved-list" id="savedList">
             <span class="no-saves">🎼 هنوز ملودی نداری!</span>
         </div>
 
+        <!-- فوتر -->
         <div class="footer">
             <span>ساخته شده با ❤️ توسط <a href="https://intellsoft.ir" target="_blank" rel="noopener">محمدعلی عباسپور</a></span>
             <span class="dedication">✨ تقدیم به بچه‌های ایران، به‌ویژه فرشته‌های میناب ✨</span>
@@ -437,7 +477,7 @@
                 } catch(e) {}
             }
 
-            // رنگ‌ها
+            // رنگ‌های سیم‌ها
             const rainbowColors = [
                 '#FF6B6B', '#FF9F43', '#FECA57', '#54A0FF', '#5F27CD',
                 '#FF6B6B', '#FF9F43', '#FECA57', '#54A0FF', '#5F27CD'
@@ -469,6 +509,59 @@
                 { name: 'دو#', freq: 554.37, emoji: '🎈' },
                 { name: 'ر#', freq: 622.25, emoji: '🎪' },
             ];
+
+            // ============ ملودی‌های آماده ============
+            const presetMelodies = {
+                happyBirthday: [
+                    { freq: 261.63, dur: 400 }, // دو
+                    { freq: 261.63, dur: 400 },
+                    { freq: 293.66, dur: 800 }, // ر
+                    { freq: 261.63, dur: 800 },
+                    { freq: 349.23, dur: 800 }, // فا
+                    { freq: 329.63, dur: 1200 }, // می
+                    { freq: 261.63, dur: 400 },
+                    { freq: 261.63, dur: 400 },
+                    { freq: 293.66, dur: 800 },
+                    { freq: 261.63, dur: 800 },
+                    { freq: 392.00, dur: 800 }, // سل
+                    { freq: 349.23, dur: 1200 }, // فا
+                ],
+                cheshmCheshm: [
+                    { freq: 329.63, dur: 500 }, // می
+                    { freq: 349.23, dur: 500 }, // فا
+                    { freq: 392.00, dur: 500 }, // سل
+                    { freq: 392.00, dur: 500 },
+                    { freq: 440.00, dur: 500 }, // لا
+                    { freq: 392.00, dur: 500 },
+                    { freq: 349.23, dur: 500 },
+                    { freq: 329.63, dur: 700 },
+                ],
+                aroosak: [
+                    { freq: 392.00, dur: 400 }, // سل
+                    { freq: 392.00, dur: 400 },
+                    { freq: 440.00, dur: 600 }, // لا
+                    { freq: 392.00, dur: 400 },
+                    { freq: 349.23, dur: 600 }, // فا
+                    { freq: 329.63, dur: 800 }, // می
+                ],
+                davidam: [
+                    { freq: 261.63, dur: 300 }, // دو
+                    { freq: 293.66, dur: 300 }, // ر
+                    { freq: 329.63, dur: 300 }, // می
+                    { freq: 349.23, dur: 300 }, // فا
+                    { freq: 392.00, dur: 400 }, // سل
+                    { freq: 349.23, dur: 300 },
+                    { freq: 329.63, dur: 600 },
+                ],
+                baroon: [
+                    { freq: 440.00, dur: 500 }, // لا
+                    { freq: 392.00, dur: 500 }, // سل
+                    { freq: 349.23, dur: 500 }, // فا
+                    { freq: 329.63, dur: 500 }, // می
+                    { freq: 293.66, dur: 500 }, // ر
+                    { freq: 261.63, dur: 800 }, // دو
+                ]
+            };
 
             let audioCtx = null, masterGain = null;
             function initAudio() {
@@ -505,18 +598,6 @@
                     osc.start(now);
                     osc.stop(now + duration + 0.1);
                 });
-                const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
-                const noiseData = noiseBuffer.getChannelData(0);
-                for (let i = 0; i < noiseData.length; i++) noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.005));
-                const noiseSource = audioCtx.createBufferSource();
-                const noiseGain = audioCtx.createGain();
-                noiseSource.buffer = noiseBuffer;
-                noiseGain.gain.setValueAtTime(vol * 0.25, now);
-                noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-                noiseSource.connect(noiseGain);
-                noiseGain.connect(masterGain);
-                noiseSource.start(now);
-                noiseSource.stop(now + 0.05);
             }
 
             const whiteContainer = document.getElementById('whiteStrings');
@@ -584,6 +665,56 @@
                 noteEl.addEventListener('animationend', () => noteEl.remove());
             }
 
+            // ============ پخش ملودی‌های آماده ============
+            let presetPlaybackIds = [];
+            function playPresetMelody(melodyKey) {
+                if (!presetMelodies[melodyKey]) return;
+                initAudio();
+                stopPresetPlayback(); // توقف ملودی قبلی
+                const notes = presetMelodies[melodyKey];
+                let timeOffset = 0;
+                notes.forEach(note => {
+                    const id = setTimeout(() => {
+                        playSantoorNote(note.freq);
+                        // هایلایت نزدیک‌ترین سیم
+                        highlightClosestString(note.freq);
+                    }, timeOffset);
+                    presetPlaybackIds.push(id);
+                    timeOffset += note.dur;
+                });
+                // توقف خودکار
+                const endId = setTimeout(() => {
+                    stopPresetPlayback();
+                }, timeOffset + 200);
+                presetPlaybackIds.push(endId);
+                showToast('🎵 ملودی پخش شد');
+            }
+
+            function stopPresetPlayback() {
+                presetPlaybackIds.forEach(id => clearTimeout(id));
+                presetPlaybackIds = [];
+                document.querySelectorAll('.string.pressed').forEach(el => el.classList.remove('pressed'));
+            }
+
+            function highlightClosestString(freq) {
+                let best = null, bestDiff = Infinity;
+                const all = [...whiteContainer.children, ...yellowContainer.children];
+                all.forEach(el => {
+                    if (el.dataset.freq) {
+                        const diff = Math.abs(parseFloat(el.dataset.freq) - freq);
+                        if (diff < bestDiff) {
+                            bestDiff = diff;
+                            best = el;
+                        }
+                    }
+                });
+                if (best && !best.classList.contains('placeholder')) {
+                    best.classList.add('pressed');
+                    setTimeout(() => best.classList.remove('pressed'), 180);
+                }
+            }
+
+            // ============ ضبط کاربر ============
             let isRecording = false, recordingData = [], recordingStartTime = 0;
             let playbackTimeoutIds = [], isPlayingBack = false;
             let melodyCounter = parseInt(localStorage.getItem('santoor_miniapp_counter') || '0');
@@ -665,6 +796,7 @@
             function stopAll() {
                 if (isRecording) stopRecording();
                 if (isPlayingBack) stopPlayback();
+                stopPresetPlayback();
             }
 
             function highlightString(type, index) {
@@ -770,6 +902,7 @@
             window.toggleRecord = toggleRecord;
             window.playRecording = playRecording;
             window.stopAll = stopAll;
+            window.playPresetMelody = playPresetMelody;
         })();
     </script>
 </body>
