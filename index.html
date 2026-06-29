@@ -20,11 +20,8 @@
             --border: rgba(255, 255, 255, 0.6);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             --radius: 24px;
-            --string-white: #faf6ed;
-            --string-yellow: #fdf3c8;
         }
 
-        /* تم تاریک */
         body.dark {
             --bg: #1a1a2e;
             --surface: #2d2d44cc;
@@ -32,8 +29,6 @@
             --text-secondary: #b8a9cc;
             --border: rgba(255, 255, 255, 0.15);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            --string-white: #e8ddf0;
-            --string-yellow: #f0e0b0;
         }
 
         * {
@@ -111,7 +106,6 @@
             transform: scale(0.88);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-
         .btn-record { background: var(--accent); color: white; }
         .btn-play { background: var(--accent-play); color: white; }
         .btn-stop { background: var(--accent-stop); color: #333; }
@@ -144,7 +138,6 @@
             white-space: nowrap;
             pointer-events: none;
             font-weight: bold;
-            letter-spacing: 0.3px;
         }
 
         /* ناحیه سنتور */
@@ -165,49 +158,69 @@
             transition: all 0.3s;
         }
 
-        /* خطوط خرک */
-        .bridge-line {
-            position: absolute;
-            left: 5%;
-            right: 5%;
-            height: 4px;
-            background: linear-gradient(90deg, #ffd166, #ff9f43, #ffd166);
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 200, 0, 0.5);
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* حالت افقی (پیش‌فرض) */
         .strings-container {
             display: flex;
-            flex-direction: column;
             flex: 1;
             gap: 2px;
             position: relative;
             z-index: 3;
         }
-        .strings-row {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: stretch;
-            flex: 1;
-            gap: 3px;
-            min-height: 0;
+
+        /* حالت افقی (پیش‌فرض) – ردیف‌های افقی */
+        @media (orientation: landscape) {
+            .strings-container {
+                flex-direction: column;
+            }
+            .strings-row {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: stretch;
+                flex: 1;
+                gap: 3px;
+                min-height: 0;
+            }
+            .string {
+                flex: 1;
+                max-width: 55px;
+                min-width: 18px;
+                border-radius: 14px 14px 6px 6px;
+            }
         }
+
+        /* حالت عمودی – ستون‌های عمودی */
+        @media (orientation: portrait) {
+            .strings-container {
+                flex-direction: row;
+                gap: 4px;
+            }
+            .strings-row {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                align-items: stretch;
+                flex: 1;
+                gap: 4px;
+            }
+            .string {
+                flex: 1;
+                max-height: 48px;
+                min-height: 24px;
+                border-radius: 6px 14px 14px 6px;
+            }
+            .string .note-emoji {
+                position: static;
+                margin-left: 2px;
+            }
+        }
+
         .string {
-            flex: 1;
-            max-width: 55px;
-            min-width: 18px;
             cursor: pointer;
-            border-radius: 14px 14px 6px 6px;
             transition: all 0.1s ease;
             touch-action: manipulation;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
-            padding-top: 4px;
             font-weight: bold;
             color: rgba(0, 0, 0, 0.35);
             font-size: 0.55rem;
@@ -215,12 +228,13 @@
             position: relative;
             border: 2px solid rgba(255, 255, 255, 0.7);
             text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
-            background: var(--string-white);
+            background: #faf6ed;
+            padding: 2px;
         }
-        .string.yellow { background: var(--string-yellow); }
+        .string.yellow { background: #fdf3c8; }
         .string:active,
         .string.pressed {
-            transform: scaleY(0.9);
+            transform: scale(0.92);
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 22px currentColor;
             filter: brightness(1.2);
             transition: all 0.05s ease;
@@ -228,8 +242,6 @@
         .string .note-emoji {
             font-size: 1rem;
             pointer-events: none;
-            position: absolute;
-            top: 2px;
         }
         .string.placeholder {
             opacity: 0.15;
@@ -237,44 +249,6 @@
             background: transparent;
             border: 2px dashed rgba(128, 128, 128, 0.3);
             box-shadow: none;
-        }
-
-        /* حالت عمودی: سیم‌ها عمودی */
-        @media (orientation: portrait) {
-            .santoor-area {
-                padding: 12px 4px;
-            }
-            .strings-container {
-                flex-direction: row;
-                gap: 4px;
-            }
-            .strings-row {
-                flex-direction: column;
-                gap: 4px;
-            }
-            .string {
-                max-width: none;
-                max-height: 48px;
-                min-height: 24px;
-                flex: 1;
-                border-radius: 6px 14px 14px 6px;
-                writing-mode: horizontal-tb;
-                align-items: center;
-                justify-content: flex-start;
-                padding-right: 4px;
-                padding-top: 0;
-            }
-            .string:active,
-            .string.pressed {
-                transform: scaleX(0.9);
-            }
-            .string .note-emoji {
-                position: static;
-                margin-right: 2px;
-            }
-            .bridge-line {
-                display: none; /* حذف خطوط خرک در حالت عمودی */
-            }
         }
 
         /* نت شناور */
@@ -315,7 +289,6 @@
         .saved-item {
             flex-shrink: 0;
             background: var(--surface);
-            backdrop-filter: blur(5px);
             border: 2px solid #ffd166;
             border-radius: 20px;
             padding: 7px 14px;
@@ -342,7 +315,6 @@
             font-size: 1.1rem;
             padding: 0 3px;
             font-weight: bold;
-            transition: 0.2s;
         }
         .saved-item .delete-btn:active { color: #e74c3c; transform: scale(1.2); }
         .no-saves {
@@ -359,7 +331,6 @@
             font-size: 0.6rem;
             color: var(--text-secondary);
             background: var(--surface);
-            backdrop-filter: blur(5px);
             border-radius: 16px;
             padding: 6px 12px;
             border: 1px solid var(--border);
@@ -372,7 +343,6 @@
             background: rgba(255, 255, 255, 0.4);
             padding: 1px 7px;
             border-radius: 10px;
-            transition: 0.2s;
         }
         .footer a:active { background: #ffd166; color: #333; }
         .footer .dedication {
@@ -411,7 +381,6 @@
     <div class="toast" id="toast"></div>
 
     <div class="main-container" id="mainContainer">
-        <!-- نوار ابزار -->
         <div class="toolbar">
             <button class="btn-circle btn-record" id="btnRecord" onclick="toggleRecord()" title="ضبط">
                 🎙️
@@ -427,22 +396,17 @@
             </button>
         </div>
 
-        <!-- ناحیه سنتور -->
         <div class="santoor-area" id="santoorArea">
-            <div class="bridge-line top-bridge" style="top: 28%;"></div>
-            <div class="bridge-line bottom-bridge" style="top: 72%;"></div>
             <div class="strings-container" id="stringsContainer">
                 <div class="strings-row white-strings" id="whiteStrings"></div>
                 <div class="strings-row yellow-strings" id="yellowStrings"></div>
             </div>
         </div>
 
-        <!-- لیست ملودی‌های ذخیره‌شده -->
         <div class="saved-list" id="savedList">
             <span class="no-saves">🎼 هنوز ملودی نداری!</span>
         </div>
 
-        <!-- فوتر -->
         <div class="footer">
             <span>ساخته شده با ❤️ توسط <a href="https://intellsoft.ir" target="_blank" rel="noopener">محمدعلی عباسپور</a></span>
             <span class="dedication">✨ تقدیم به بچه‌های ایران، به‌ویژه فرشته‌های میناب ✨</span>
@@ -451,8 +415,7 @@
 
     <script>
         (function() {
-            // ============ مینی‌اپ بله ============
-            // تشخیص تم کاربر
+            // تم کاربر
             function applyTheme() {
                 try {
                     if (window.Bale && Bale.WebApp && Bale.WebApp.colorScheme === 'dark') {
@@ -460,20 +423,19 @@
                     } else {
                         document.body.classList.remove('dark');
                     }
-                } catch(e) { /* در محیط غیر بله */ }
+                } catch(e) {}
             }
             applyTheme();
 
-            // آماده‌سازی مینی‌اپ
             function notifyReady() {
                 try {
                     if (window.Bale && Bale.WebApp && Bale.WebApp.ready) {
                         Bale.WebApp.ready();
                     }
-                } catch(e) { /* در محیط غیر بله */ }
+                } catch(e) {}
             }
 
-            // ============ رنگ‌های شاد ============
+            // رنگ‌ها
             const rainbowColors = [
                 '#FF6B6B', '#FF9F43', '#FECA57', '#54A0FF', '#5F27CD',
                 '#FF6B6B', '#FF9F43', '#FECA57', '#54A0FF', '#5F27CD'
@@ -497,19 +459,16 @@
             const yellowNotes = [
                 { name: 'دو#', freq: 277.18, emoji: '🌟' },
                 { name: 'ر#', freq: 311.13, emoji: '⭐' },
-                null, // می-فا
+                null,
                 { name: 'فا#', freq: 369.99, emoji: '🌈' },
                 { name: 'سل#', freq: 415.30, emoji: '🍭' },
                 { name: 'لا#', freq: 466.16, emoji: '🍬' },
-                null, // سی-دو
+                null,
                 { name: 'دو#', freq: 554.37, emoji: '🎈' },
                 { name: 'ر#', freq: 622.25, emoji: '🎪' },
             ];
 
-            // ============ Audio ============
-            let audioCtx = null;
-            let masterGain = null;
-
+            let audioCtx = null, masterGain = null;
             function initAudio() {
                 if (!audioCtx) {
                     audioCtx = new(window.AudioContext || window.webkitAudioContext)();
@@ -526,14 +485,12 @@
                 }
                 if (!audioCtx) return;
                 const now = audioCtx.currentTime;
-                const duration = 1.5;
-                const vol = 0.45;
-                const harmonics = [
+                const duration = 1.5, vol = 0.45;
+                [
                     { mult: 1.0, vol: 1.0 },
                     { mult: 2.0, vol: 0.45 },
                     { mult: 3.0, vol: 0.22 },
-                ];
-                harmonics.forEach(h => {
+                ].forEach(h => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.type = 'sine';
@@ -546,7 +503,6 @@
                     osc.start(now);
                     osc.stop(now + duration + 0.1);
                 });
-                // نویز زخمه
                 const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
                 const noiseData = noiseBuffer.getChannelData(0);
                 for (let i = 0; i < noiseData.length; i++) noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.005));
@@ -561,7 +517,6 @@
                 noiseSource.stop(now + 0.05);
             }
 
-            // ============ ساخت سیم‌ها ============
             const whiteContainer = document.getElementById('whiteStrings');
             const yellowContainer = document.getElementById('yellowStrings');
             const santoorArea = document.getElementById('santoorArea');
@@ -569,7 +524,6 @@
             function createStringElements() {
                 whiteContainer.innerHTML = '';
                 yellowContainer.innerHTML = '';
-                
                 whiteNotes.forEach((note, i) => {
                     const el = document.createElement('div');
                     el.className = 'string white-string';
@@ -581,7 +535,6 @@
                     attachStringEvents(el, note.freq);
                     whiteContainer.appendChild(el);
                 });
-                
                 yellowNotes.forEach((note, i) => {
                     const el = document.createElement('div');
                     if (note === null) {
@@ -629,12 +582,8 @@
                 noteEl.addEventListener('animationend', () => noteEl.remove());
             }
 
-            // ============ ضبط ============
-            let isRecording = false;
-            let recordingData = [];
-            let recordingStartTime = 0;
-            let playbackTimeoutIds = [];
-            let isPlayingBack = false;
+            let isRecording = false, recordingData = [], recordingStartTime = 0;
+            let playbackTimeoutIds = [], isPlayingBack = false;
             let melodyCounter = parseInt(localStorage.getItem('santoor_miniapp_counter') || '0');
 
             function recordNote(type, index, freq) {
@@ -646,11 +595,7 @@
 
             function toggleRecord() {
                 initAudio();
-                if (isRecording) {
-                    stopRecording();
-                } else {
-                    startRecording();
-                }
+                isRecording ? stopRecording() : startRecording();
             }
 
             function startRecording() {
@@ -723,7 +668,7 @@
             function highlightString(type, index) {
                 const container = type === 'white' ? whiteContainer : yellowContainer;
                 const el = container.querySelector(`[data-index="${index}"]`);
-                if (el && el.classList.contains('string') && !el.classList.contains('placeholder')) {
+                if (el && !el.classList.contains('placeholder')) {
                     el.classList.add('pressed');
                     setTimeout(() => el.classList.remove('pressed'), 140);
                 }
@@ -744,7 +689,6 @@
                 }
                 btnPlay.disabled = (recordingData.length === 0 || isRecording);
                 btnStop.disabled = (!isRecording && playbackTimeoutIds.length === 0);
-                
                 if (isPlayingBack) {
                     btnPlay.classList.add('playing');
                 } else {
@@ -752,7 +696,6 @@
                 }
             }
 
-            // ============ ذخیره‌سازی ============
             const STORAGE_KEY = 'santoor_miniapp_melodies';
             function getSavedMelodies() {
                 try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
@@ -773,8 +716,7 @@
             function deleteMelody(id, e) {
                 e.stopPropagation();
                 const melodies = getSavedMelodies();
-                const filtered = melodies.filter(m => m.id !== id);
-                saveMelodiesToStorage(filtered);
+                saveMelodiesToStorage(melodies.filter(m => m.id !== id));
                 renderSavedList();
                 showToast('🗑️ ملودی پاک شد');
             }
@@ -797,7 +739,6 @@
             window._load = loadMelody;
             window._del = deleteMelody;
 
-            // ============ Toast ============
             let toastTimer;
             function showToast(msg) {
                 const t = document.getElementById('toast');
@@ -807,19 +748,12 @@
                 toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
             }
 
-            // ============ راه‌اندازی ============
             function init() {
                 createStringElements();
                 renderSavedList();
                 updateUI();
-                
-                // فعال‌سازی صدا با اولین لمس
                 document.addEventListener('pointerdown', initAudio, { once: true });
-                
-                // اطلاع‌رسانی به بله که مینی‌اپ آماده است
                 notifyReady();
-                
-                // ذخیره قبل از بستن
                 window.addEventListener('beforeunload', (e) => {
                     if (isRecording && recordingData.length) {
                         e.preventDefault();
@@ -828,13 +762,9 @@
                 });
             }
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
 
-            // expose for HTML
             window.toggleRecord = toggleRecord;
             window.playRecording = playRecording;
             window.stopAll = stopAll;
