@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🎵 سنتور رنگارنگ برای کودکان | ضبط خودکار</title>
+    <style>
+        :root {
+            --bg-start: #a18cd1;
+            --bg-end: #fbc2eb;
+            --card-bg: rgba(255, 255, 255, 0.3);
+            --toolbar-bg: rgba(255, 255, 255, 0.4);
+            --text-dark: #4a2c5e;
+            --btn-record: #ff6b6b;
+            --btn-play: #4ecdc4;
+            --btn-stop: #ffd166;
+            --shadow-fun: 0 6px 20px rgba(0, 0, 0, 0.15);
+            --radius-big: 30px;
+            --radius-small: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: 'Comic Neue', 'Vazirmatn', 'Segoe UI', cursive, sans-serif;
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 50%, #ffecd2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            touch-action: manipulation;
+            position: relative;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            filter: blur(30px);
+            z-index: 0;
+        }
+        .cloud1 { width: 180px; height: 90px; top: 10%; left: 5%; }
+        .cloud2 { width: 250px; height: 110px; bottom: 8%; right: 3%; }
+        .cloud3 { width: 140px; height: 70px; top: 40%; right: 10%; }
+
+        .rotate-hint {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(160, 140, 210, 0.95);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+            padding: 30px;
+            color: white;
+        }
+        .rotate-hint .icon {
+            font-size: 80px;
+            animation: rotate-phone 2s ease-in-out infinite;
+        }
+        @keyframes rotate-phone {
+            0%,100% { transform: rotate(0deg); }
+            40% { transform: rotate(-90deg); }
+            60% { transform: rotate(-90deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .rotate-hint p {
+            font-size: 1.3rem;
+            font-weight: bold;
+            line-height: 1.8;
+        }
+        .rotate-hint .sub {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (orientation: portrait) {
+            .rotate-hint { display: flex; }
+            .main-container { display: none !important; }
+        }
+        @media (orientation: landscape) {
+            .rotate-hint { display: none !important; }
+            .main-container { display: flex !important; }
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            width: 100dvw;
+            height: 100vh;
+            height: 100dvh;
+            padding: 10px 15px;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            padding: 12px 20px;
+            background: var(--toolbar-bg);
+            backdrop-filter: blur(15px);
+            border-radius: var(--radius-big);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            box-shadow: var(--shadow-fun);
+        }
+        .btn-circle {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            background: white;
+            color: #333;
+            position: relative;
+            touch-action: manipulation;
+            outline: none;
+        }
+        .btn-circle:active {
+            transform: scale(0.9);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+        .btn-record { background: var(--btn-record); color: white; }
+        .btn-play { background: var(--btn-play); color: white; }
+        .btn-stop { background: var(--btn-stop); color: #333; }
+        .btn-circle.recording {
+            animation: pulse-record 0.6s infinite;
+        }
+        @keyframes pulse-record {
+            0% { box-shadow: 0 0 0 0 rgba(255,107,107,0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255,107,107,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,107,107,0); }
+        }
+        .btn-circle.playing {
+            animation: pulse-play 0.8s infinite;
+        }
+        @keyframes pulse-play {
+            0% { box-shadow: 0 0 0 0 rgba(78,205,196,0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(78,205,196,0); }
+            100% { box-shadow: 0 0 0 0 rgba(78,205,196,0); }
+        }
+        .btn-label {
+            position: absolute;
+            bottom: -28px;
+            font-size: 0.7rem;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            font-weight: bold;
+        }
+
+        .santoor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-big);
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            box-shadow: var(--shadow-fun), inset 0 2px 20px rgba(255,255,255,0.6);
+            padding: 20px 10px;
+            overflow: visible;
+            min-height: 180px;
+        }
+
+        .bridge-line {
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            height: 5px;
+            background: linear-gradient(90deg, #ffd166, #ff9f43, #ffd166);
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(255, 200, 0, 0.6);
+            pointer-events: none;
+            z-index: 5;
+        }
+        .bridge-line.top-bridge { top: 30%; }
+        .bridge-line.bottom-bridge { top: 68%; }
+
+        .strings-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: stretch;
+            flex: 1;
+            position: relative;
+            z-index: 3;
+            padding: 0 2%;
+            gap: 4px;
+            min-height: 0;
+        }
+        .string {
+            flex: 1;
+            max-width: 52px;
+            min-width: 20px;
+            cursor: pointer;
+            border-radius: 15px 15px 8px 8px;
+            transition: all 0.1s ease;
+            touch-action: manipulation;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 6px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.4);
+            font-size: 0.6rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            position: relative;
+            border: 2px solid rgba(255,255,255,0.8);
+            text-shadow: 0 1px 2px white;
+        }
+        .string:active,
+        .string.pressed {
+            transform: scaleY(0.92);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 25px currentColor;
+            filter: brightness(1.2);
+            transition: all 0.05s ease;
+        }
+        .string .note-emoji {
+            font-size: 1.1rem;
+            pointer-events: none;
+            position: absolute;
+            top: 2px;
+        }
+
+        .floating-note {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.5rem;
+            animation: float-up 0.7s ease-out forwards;
+            z-index: 20;
+            color: #ff6b6b;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        @keyframes float-up {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.4); }
+        }
+
+        .saved-list {
+            flex-shrink: 0;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            min-height: 55px;
+            align-items: center;
+            scrollbar-width: thin;
+            scrollbar-color: #ff9f43 transparent;
+        }
+        .saved-list::-webkit-scrollbar { height: 4px; }
+        .saved-list::-webkit-scrollbar-track { background: transparent; }
+        .saved-list::-webkit-scrollbar-thumb { background: #ff9f43; border-radius: 10px; }
+
+        .saved-item {
+            flex-shrink: 0;
+            background: #ffffffcc;
+            backdrop-filter: blur(5px);
+            border: 2px solid #ffd166;
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #4a2c5e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+        .saved-item:active {
+            background: #ffd166;
+            transform: scale(0.94);
+        }
+        .saved-item .delete-btn {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 4px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .saved-item .delete-btn:active { color: #e74c3c; transform: scale(1.2); }
+        .no-saves {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            padding: 0 15px;
+            color: #4a2c5e;
+        }
+
+        /* فوتر */
+        .footer {
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 0.65rem;
+            color: #4a2c5e;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 6px 14px;
+            margin-top: 2px;
+            border: 1px solid rgba(255,255,255,0.6);
+            line-height: 1.6;
+        }
+        .footer a {
+            color: #5f27cd;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(255,255,255,0.6);
+            padding: 1px 8px;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+        .footer a:active {
+            background: #ffd166;
+            color: #333;
+        }
+        .footer .dedication {
+            display: block;
+            margin-top: 2px;
+            font-style: italic;
+            color: #6c3483;
+            font-weight: bold;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4a2c5e;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            border: 2px solid #ffd166;
+        }
+        .toast.show { opacity: 1; }
+
+        @media (max-width: 700px) and (orientation: landscape) {
+            .btn-circle { width: 50px; height: 50px; font-size: 1.5rem; }
+            .btn-label { font-size: 0.55rem; bottom: -22px; padding: 2px 8px; }
+            .string { max-width: 42px; min-width: 16px; border-radius: 12px 12px 6px 6px; }
+            .string .note-emoji { font-size: 0.8rem; }
+            .saved-item { padding: 6px 12px; font-size: 0.7rem; }
+            .footer { font-size: 0.55rem; padding: 4px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+
+    <div class="rotate-hint">
+        <div class="icon">📱✨</div>
+        <p>گوشی رو بچرخون<br>تا سنتور رو ببینی!</p>
+        <p class="sub">🎨 افقی نگهش دار</p>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="main-container" id="mainContainer">
+        <div class="toolbar">
+            <button class="btn-circle btn-record" id="btnRecord" onclick="toggleRecord()" title="ضبط">
+                🎙️
+                <span class="btn-label" id="recordLabel">ضبط</span>
+            </button>
+            <button class="btn-circle btn-play" id="btnPlay" onclick="playRecording()" disabled title="پخش">
+                🎵
+                <span class="btn-label">پخش</span>
+            </button>
+            <button class="btn-circle btn-stop" id="btnStop" onclick="stopAll()" disabled title="توقف">
+                ⏹️
+                <span class="btn-label">توقف</span>
+            </button>
+        </div>
+
+        <div class="santoor-area" id="santoorArea">
+            <div class="bridge-line top-bridge"></div>
+            <div class="bridge-line bottom-bridge"></div>
+            <div class="strings-row white-strings" id="whiteStrings"></div>
+            <div class="strings-row yellow-strings" id="yellowStrings"></div>
+        </div>
+
+        <div class="saved-list" id="savedList">
+            <span class="no-saves">🎼 هنوز ملودی نداری!</span>
+        </div>
+
+        <!-- فوتر جدید با نام سازنده و لینک -->
+        <div class="footer">
+            <span>ساخته شده با ❤️ توسط <a href="https://intellsoft.ir" target="_blank" rel="noopener">محمدعلی عباسپور</a></span>
+            <span class="dedication">✨ تقدیم به بچه‌های ایران، به‌ویژه فرشته‌های میناب ✨</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const rainbowColors = [
+                '#FF6B6B', '#FF9F43', '#FECA57', '#54A0FF', '#5F27CD',
+                '#FF6B6B', '#FF9F43', '#FECA57', '#54A0FF', '#5F27CD'
+            ];
+            const pastelColors = [
+                '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF',
+                '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF'
+            ];
+
+            const whiteNotes = [
+                { name: 'دو', freq: 261.63, emoji: '🐱' },
+                { name: 'ر', freq: 293.66, emoji: '🐶' },
+                { name: 'می', freq: 329.63, emoji: '🐰' },
+                { name: 'فا', freq: 349.23, emoji: '🦊' },
+                { name: 'سل', freq: 392.00, emoji: '🐸' },
+                { name: 'لا', freq: 440.00, emoji: '🐼' },
+                { name: 'سی', freq: 493.88, emoji: '🐨' },
+                { name: 'دو', freq: 523.25, emoji: '🐯' },
+                { name: 'ر', freq: 587.33, emoji: '🦁' },
+            ];
+
+            const yellowNotes = [
+                { name: 'دو#', freq: 277.18, emoji: '🌟' },
+                { name: 'ر#', freq: 311.13, emoji: '⭐' },
+                null,
+                { name: 'فا#', freq: 369.99, emoji: '🌈' },
+                { name: 'سل#', freq: 415.30, emoji: '🍭' },
+                { name: 'لا#', freq: 466.16, emoji: '🍬' },
+                null,
+                { name: 'دو#', freq: 554.37, emoji: '🎈' },
+                { name: 'ر#', freq: 622.25, emoji: '🎪' },
+            ];
+
+            let audioCtx = null;
+            let masterGain = null;
+
+            function initAudio() {
+                if (!audioCtx) {
+                    audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                    masterGain = audioCtx.createGain();
+                    masterGain.gain.value = 0.6;
+                    masterGain.connect(audioCtx.destination);
+                }
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            }
+
+            function playSantoorNote(frequency) {
+                if (!audioCtx) return;
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+                const duration = 1.6;
+                const vol = 0.5;
+                const harmonics = [
+                    { mult: 1.0, vol: 1.0 },
+                    { mult: 2.0, vol: 0.5 },
+                    { mult: 3.0, vol: 0.25 },
+                    { mult: 4.0, vol: 0.12 },
+                ];
+                harmonics.forEach(h => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(frequency * h.mult, now);
+                    osc.detune.setValueAtTime((Math.random() - 0.5) * 3, now);
+                    gain.gain.setValueAtTime(vol * h.vol, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration * (0.8 / h.mult));
+                    osc.connect(gain);
+                    gain.connect(masterGain);
+                    osc.start(now);
+                    osc.stop(now + duration + 0.2);
+                });
+                const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.05, audioCtx.sampleRate);
+                const noiseData = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < noiseData.length; i++) noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.006));
+                const noiseSource = audioCtx.createBufferSource();
+                const noiseGain = audioCtx.createGain();
+                noiseSource.buffer = noiseBuffer;
+                noiseGain.gain.setValueAtTime(vol * 0.3, now);
+                noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+                noiseSource.connect(noiseGain);
+                noiseGain.connect(masterGain);
+                noiseSource.start(now);
+                noiseSource.stop(now + 0.06);
+            }
+
+            const whiteContainer = document.getElementById('whiteStrings');
+            const yellowContainer = document.getElementById('yellowStrings');
+            const santoorArea = document.getElementById('santoorArea');
+
+            function createStringElements() {
+                whiteContainer.innerHTML = '';
+                yellowContainer.innerHTML = '';
+                whiteNotes.forEach((note, i) => {
+                    const el = document.createElement('div');
+                    el.className = 'string white-string';
+                    el.style.backgroundColor = rainbowColors[i % rainbowColors.length];
+                    el.dataset.index = i;
+                    el.dataset.type = 'white';
+                    el.dataset.freq = note.freq;
+                    el.innerHTML = `<span class="note-emoji">${note.emoji}</span>`;
+                    attachStringEvents(el, note.freq);
+                    whiteContainer.appendChild(el);
+                });
+                yellowNotes.forEach((note, i) => {
+                    const el = document.createElement('div');
+                    if (note === null) {
+                        el.className = 'string';
+                        el.style.opacity = '0.2';
+                        el.style.pointerEvents = 'none';
+                        el.style.background = 'transparent';
+                        el.style.border = '2px dashed rgba(255,255,255,0.5)';
+                    } else {
+                        el.className = 'string yellow-string';
+                        el.style.backgroundColor = pastelColors[i % pastelColors.length];
+                        el.dataset.index = i;
+                        el.dataset.type = 'yellow';
+                        el.dataset.freq = note.freq;
+                        el.innerHTML = `<span class="note-emoji">${note.emoji}</span>`;
+                        attachStringEvents(el, note.freq);
+                    }
+                    yellowContainer.appendChild(el);
+                });
+            }
+
+            function attachStringEvents(el, freq) {
+                el.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    initAudio();
+                    playSantoorNote(freq);
+                    el.classList.add('pressed');
+                    recordNote(el.dataset.type, el.dataset.index, freq);
+                    spawnFloatingNote(el);
+                    if (navigator.vibrate) navigator.vibrate(10);
+                });
+                el.addEventListener('pointerup', () => el.classList.remove('pressed'));
+                el.addEventListener('pointerleave', () => el.classList.remove('pressed'));
+                el.addEventListener('pointercancel', () => el.classList.remove('pressed'));
+                el.addEventListener('contextmenu', e => e.preventDefault());
+            }
+
+            function spawnFloatingNote(el) {
+                const rect = el.getBoundingClientRect();
+                const santoorRect = santoorArea.getBoundingClientRect();
+                const x = rect.left + rect.width/2 - santoorRect.left;
+                const y = rect.top - santoorRect.top;
+                const noteEl = document.createElement('span');
+                noteEl.className = 'floating-note';
+                noteEl.textContent = '🎵';
+                noteEl.style.left = x + 'px';
+                noteEl.style.top = y + 'px';
+                santoorArea.appendChild(noteEl);
+                noteEl.addEventListener('animationend', () => noteEl.remove());
+            }
+
+            let isRecording = false;
+            let recordingData = [];
+            let recordingStartTime = 0;
+            let playbackTimeoutIds = [];
+            let isPlayingBack = false;
+            let melodyCounter = parseInt(localStorage.getItem('santoor_kids_counter') || '0');
+
+            function recordNote(type, index, freq) {
+                if (!isRecording) return;
+                const elapsed = performance.now() - recordingStartTime;
+                recordingData.push({ type, index, freq, time: elapsed / 1000 });
+                updateUI();
+            }
+
+            function toggleRecord() {
+                initAudio();
+                if (isRecording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            }
+
+            function startRecording() {
+                if (playbackTimeoutIds.length > 0) stopPlayback();
+                recordingData = [];
+                recordingStartTime = performance.now();
+                isRecording = true;
+                updateUI();
+                showToast('🎙️ ضبط شروع شد! بزن روی سیم‌ها');
+            }
+
+            function stopRecording() {
+                isRecording = false;
+                updateUI();
+                if (recordingData.length > 0) {
+                    autoSaveMelody();
+                } else {
+                    showToast('😕 هیچ نتی نزدی!');
+                }
+            }
+
+            function autoSaveMelody() {
+                melodyCounter++;
+                localStorage.setItem('santoor_kids_counter', melodyCounter);
+                const name = `ملودی ${melodyCounter}`;
+                const melodies = getSavedMelodies();
+                melodies.push({
+                    id: Date.now(),
+                    name: name,
+                    data: recordingData,
+                    noteCount: recordingData.length,
+                });
+                saveMelodiesToStorage(melodies);
+                showToast(`💾 ${name} خودکار ذخیره شد! (${recordingData.length} نت)`);
+                renderSavedList();
+            }
+
+            function playRecording() {
+                if (recordingData.length === 0 || isRecording) return;
+                if (isPlayingBack) stopPlayback();
+                isPlayingBack = true;
+                updateUI();
+                initAudio();
+                recordingData.forEach(note => {
+                    const id = setTimeout(() => {
+                        playSantoorNote(note.freq);
+                        highlightString(note.type, note.index);
+                    }, note.time * 1000);
+                    playbackTimeoutIds.push(id);
+                });
+                const lastTime = recordingData[recordingData.length-1].time * 1000;
+                const endId = setTimeout(() => stopPlayback(), lastTime + 1500);
+                playbackTimeoutIds.push(endId);
+                showToast('🎵 داره پخش میشه...');
+            }
+
+            function stopPlayback() {
+                playbackTimeoutIds.forEach(id => clearTimeout(id));
+                playbackTimeoutIds = [];
+                isPlayingBack = false;
+                updateUI();
+                document.querySelectorAll('.string.pressed').forEach(el => el.classList.remove('pressed'));
+            }
+
+            function stopAll() {
+                if (isRecording) stopRecording();
+                if (isPlayingBack) stopPlayback();
+            }
+
+            function highlightString(type, index) {
+                const container = type === 'white' ? whiteContainer : yellowContainer;
+                const el = container.querySelector(`[data-index="${index}"]`);
+                if (el && el.classList.contains('string')) {
+                    el.classList.add('pressed');
+                    setTimeout(() => el.classList.remove('pressed'), 150);
+                }
+            }
+
+            function updateUI() {
+                const btnRecord = document.getElementById('btnRecord');
+                const recordLabel = document.getElementById('recordLabel');
+                const btnPlay = document.getElementById('btnPlay');
+                const btnStop = document.getElementById('btnStop');
+                if (isRecording) {
+                    btnRecord.classList.add('recording');
+                    recordLabel.textContent = 'ایست';
+                } else {
+                    btnRecord.classList.remove('recording');
+                    recordLabel.textContent = 'ضبط';
+                }
+                btnPlay.disabled = (recordingData.length === 0 || isRecording);
+                btnStop.disabled = (!isRecording && playbackTimeoutIds.length === 0);
+                if (isPlayingBack) {
+                    btnPlay.classList.add('playing');
+                } else {
+                    btnPlay.classList.remove('playing');
+                }
+            }
+
+            const STORAGE_KEY = 'santoor_kids_melodies';
+            function getSavedMelodies() {
+                try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+            }
+            function saveMelodiesToStorage(melodies) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(melodies));
+            }
+            function loadMelody(id) {
+                const melodies = getSavedMelodies();
+                const m = melodies.find(x => x.id === id);
+                if (!m) return;
+                if (isRecording) stopRecording();
+                if (isPlayingBack) stopPlayback();
+                recordingData = [...m.data];
+                updateUI();
+                showToast(`📂 ${m.name} بارگذاری شد`);
+            }
+            function deleteMelody(id, e) {
+                e.stopPropagation();
+                const melodies = getSavedMelodies();
+                const filtered = melodies.filter(m => m.id !== id);
+                saveMelodiesToStorage(filtered);
+                renderSavedList();
+                showToast('🗑️ ملودی پاک شد');
+            }
+
+            function renderSavedList() {
+                const list = document.getElementById('savedList');
+                const melodies = getSavedMelodies();
+                if (melodies.length === 0) {
+                    list.innerHTML = '<span class="no-saves">🎼 هنوز ملودی نداری!</span>';
+                    return;
+                }
+                list.innerHTML = melodies.map(m => `
+                    <div class="saved-item" onclick="window._load(${m.id})">
+                        🎵 ${m.name}
+                        <button class="delete-btn" onclick="window._del(${m.id}, event)">✕</button>
+                    </div>
+                `).join('');
+            }
+
+            window._load = loadMelody;
+            window._del = deleteMelody;
+
+            let toastTimer;
+            function showToast(msg) {
+                const t = document.getElementById('toast');
+                t.textContent = msg;
+                t.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+            }
+
+            function init() {
+                createStringElements();
+                renderSavedList();
+                updateUI();
+                document.addEventListener('pointerdown', initAudio, { once: true });
+                window.addEventListener('beforeunload', (e) => {
+                    if (isRecording && recordingData.length) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+                console.log('🎨 سنتور کودکانه آماده!');
+            }
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+
+            window.toggleRecord = toggleRecord;
+            window.playRecording = playRecording;
+            window.stopAll = stopAll;
+        })();
+    </script>
+</body>
+</html>
